@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Simple URL Shortener</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .container {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      text-align: center;
+      width: 400px;
+    }
+    input {
+      width: 80%;
+      padding: 10px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    button {
+      padding: 10px 15px;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #0056b3;
+    }
+    .result {
+      margin-top: 15px;
+      font-size: 14px;
+      word-wrap: break-word;
+    }
+    a {
+      color: #007bff;
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>🔗 Simple URL Shortener</h2>
+    <input type="text" id="longUrl" placeholder="Enter your long URL">
+    <br>
+    <button onclick="shortenUrl()">Shorten URL</button>
+    <div class="result" id="result"></div>
+  </div>
+
+  <script>
+    async function shortenUrl() {
+      const longUrl = document.getElementById("longUrl").value.trim();
+      if (!longUrl) {
+        alert("Please enter a URL");
+        return;
+      }
+
+      try {
+        const response = await fetch("/shorten", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ longUrl })
+        });
+
+        const data = await response.json();
+        if (data.error) {
+          document.getElementById("result").innerHTML = "❌ Error: " + data.error;
+        } else {
+          document.getElementById("result").innerHTML =
+            `✅ Shortened URL: <a href="${data.shortUrl}" target="_blank">${data.shortUrl}</a>`;
+        }
+      } catch (err) {
+        document.getElementById("result").innerHTML = "❌ Error: " + err.message;
+      }
+    }
+  </script>
+</body>
+</html>
